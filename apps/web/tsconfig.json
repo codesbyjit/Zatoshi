@@ -7,10 +7,12 @@
       }
     ],
     "strictNullChecks": true,
-
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@components/*": ["./components/*"],
+      "@components/ui/*": ["./components/ui/*"],
+      "@lib/*": ["./lib/*"]
     }
   },
   "include": [

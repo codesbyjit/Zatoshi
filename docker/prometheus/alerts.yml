@@ -1,0 +1,115 @@
+groups:
+  - name: ecommerce
+    rules:
+      # -----------------------------------------------------------------------
+      # Symptom-based alerts — alert on user-facing symptoms, not causes
+      # -----------------------------------------------------------------------
+
+      - alert: HighErrorRate
+        expr: |
+          rate(http_requests_total{status=~"5.."}[5m])
+          /
+          rate(http_requests_total[5m])
+          > 0.05
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Error rate > 5% for {{ $labels.service }}"
+          description: >
+            Service {{ $labels.service }} on {{ $labels.instance }} has an HTTP 5xx
+            error rate of {{ $value | humanizePercentage }} over the last 5 minutes.
+
+      - alert: HighLatency
+        expr: |
+          histogram_quantile(
+            0.95,
+            rate(http_request_duration_seconds_bucket[5m])
+          ) > 2
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "P95 latency > 2s for {{ $labels.service }}"
+          description: >
+            Service {{ $labels.service }} on {{ $labels.instance }} has a P95
+            latency of {{ $value | humanizeDuration }} over the last 5 minutes.
+
+      - alert: CriticalLatency
+        expr: |
+          histogram_quantile(
+            0.99,
+            rate(http_request_duration_seconds_bucket[5m])
+          ) > 5
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "P99 latency > 5s for {{ $labels.service }}"
+          description: >
+            Service {{ $labels.service }} on {{ $labels.instance }} has a P99
+            latency of {{ $value | humanizeDuration }} over the last 5 minutes.
+
+      - alert: ServiceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "{{ $labels.service }} is down"
+          description: >
+            Service {{ $labels.service }} on {{ $labels.instance }} has been
+            unreachable for more than 1 minute.
+
+      - alert: HighMemoryUsage
+        expr: process_resident_memory_bytes > 500 * 1024 * 1024
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Memory > 500MB for {{ $labels.service }}"
+          description: >
+            Service {{ $labels.service }} on {{ $labels.instance }} is using
+            {{ $value | humanize1024 }} of resident memory, exceeding the 500 MB
+            threshold.
+
+      - alert: HighCPUUsage
+        expr: rate(process_cpu_seconds_total[5m]) > 0.8
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "CPU > 80% for {{ $labels.service }}"
+          description: >
+            Service {{ $labels.service }} on {{ $labels.instance }} has CPU
+            usage at {{ $value | humanizePercentage }} over the last 5 minutes.
+
+      - alert: HighOrderErrorRate
+        expr: |
+          rate(orders_total{status="failed"}[10m])
+          /
+          rate(orders_total[10m])
+          > 0.1
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Order failure rate > 10%"
+          description: >
+            The order failure rate is {{ $value | humanizePercentage }} over the
+            last 10 minutes. Investigate payment processing or inventory systems.
+
+      - alert: LowCacheHitRate
+        expr: |
+          rate(cache_hits_total[5m])
+          /
+          (rate(cache_hits_total[5m]) + rate(cache_misses_total[5m]))
+          < 0.5
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Cache hit rate < 50% for {{ $labels.cache }}"
+          description: >
+            The cache hit rate for {{ $labels.cache }} is {{ $value |
+            humanizePercentage }}. Consider reviewing cache key strategy or TTLs.

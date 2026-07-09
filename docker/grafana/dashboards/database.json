@@ -1,0 +1,200 @@
+{
+  "title": "Database & Cache Metrics",
+  "uid": "database-metrics",
+  "version": 1,
+  "schemaVersion": 38,
+  "tags": ["ecommerce", "database", "cache"],
+  "timezone": "browser",
+  "editable": true,
+  "refresh": "15s",
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "title": "DB Query Duration (P50)",
+      "type": "timeseries",
+      "id": 1,
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 0 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "min": 0,
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green" }, { "color": "orange", "value": 0.1 }, { "color": "red", "value": 0.5 }] }
+        }
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.50, sum(rate(db_query_duration_seconds_bucket[5m])) by (le, operation, collection))",
+          "legendFormat": "{{ operation }} / {{ collection }}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "title": "DB Query Duration (P95)",
+      "type": "timeseries",
+      "id": 2,
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 0 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "min": 0,
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green" }, { "color": "orange", "value": 0.5 }, { "color": "red", "value": 1 }] }
+        }
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(db_query_duration_seconds_bucket[5m])) by (le, operation, collection))",
+          "legendFormat": "{{ operation }} / {{ collection }}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "title": "DB Queries per Second",
+      "type": "timeseries",
+      "id": 3,
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 0 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "min": 0
+        }
+      },
+      "targets": [
+        {
+          "expr": "sum(rate(db_query_duration_seconds_count[1m])) by (operation)",
+          "legendFormat": "{{ operation }}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "title": "Redis Cache Hit Rate",
+      "type": "timeseries",
+      "id": 4,
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 8 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green" }, { "color": "orange", "value": 70 }, { "color": "red", "value": 50 }] }
+        }
+      },
+      "targets": [
+        {
+          "expr": "sum(rate(cache_hits_total[5m])) by (cache) / (sum(rate(cache_hits_total[5m])) by (cache) + sum(rate(cache_misses_total[5m])) by (cache)) * 100",
+          "legendFormat": "{{ cache }}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "title": "Cache Hits vs Misses",
+      "type": "timeseries",
+      "id": 5,
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 8 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "min": 0
+        }
+      },
+      "targets": [
+        {
+          "expr": "sum(rate(cache_hits_total[5m])) by (cache)",
+          "legendFormat": "{{ cache }} hits",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(rate(cache_misses_total[5m])) by (cache)",
+          "legendFormat": "{{ cache }} misses",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "title": "Process Memory (All Services)",
+      "type": "timeseries",
+      "id": 6,
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 8 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "min": 0,
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green" }, { "color": "orange", "value": 262144000 }, { "color": "red", "value": 524288000 }] }
+        }
+      },
+      "targets": [
+        {
+          "expr": "process_resident_memory_bytes",
+          "legendFormat": "{{ service }}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "title": "CPU Usage (All Services)",
+      "type": "timeseries",
+      "id": 7,
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 16 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green" }, { "color": "orange", "value": 60 }, { "color": "red", "value": 80 }] }
+        }
+      },
+      "targets": [
+        {
+          "expr": "rate(process_cpu_seconds_total[5m]) * 100",
+          "legendFormat": "{{ service }}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "title": "Event Loop Lag",
+      "type": "timeseries",
+      "id": 8,
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 16 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "min": 0,
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green" }, { "color": "orange", "value": 0.05 }, { "color": "red", "value": 0.1 }] }
+        }
+      },
+      "targets": [
+        {
+          "expr": "nodejs_event_loop_lag_seconds",
+          "legendFormat": "{{ service }}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "title": "Open File Descriptors",
+      "type": "timeseries",
+      "id": 9,
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 16 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "min": 0
+        }
+      },
+      "targets": [
+        {
+          "expr": "process_open_fds",
+          "legendFormat": "{{ service }}",
+          "refId": "A"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,229 @@
+{
+  "title": "Business Metrics",
+  "uid": "business-metrics",
+  "version": 1,
+  "schemaVersion": 38,
+  "tags": ["ecommerce", "business"],
+  "timezone": "browser",
+  "editable": true,
+  "refresh": "30s",
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "title": "Orders per Minute",
+      "type": "timeseries",
+      "id": 1,
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 0 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "cpm",
+          "min": 0,
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green" }, { "color": "orange", "value": 50 }, { "color": "red", "value": 100 }] }
+        }
+      },
+      "targets": [
+        {
+          "expr": "sum(rate(orders_total[1m]))",
+          "legendFormat": "All Orders",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(rate(orders_total{status=\"completed\"}[1m]))",
+          "legendFormat": "Completed",
+          "refId": "B"
+        },
+        {
+          "expr": "sum(rate(orders_total{status=\"failed\"}[1m]))",
+          "legendFormat": "Failed",
+          "refId": "C"
+        }
+      ]
+    },
+    {
+      "title": "Revenue per Hour",
+      "type": "timeseries",
+      "id": 2,
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 0 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyUSD",
+          "min": 0
+        }
+      },
+      "targets": [
+        {
+          "expr": "sum(rate(revenue_total[1h]))",
+          "legendFormat": "Revenue (USD cents)",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "title": "Order Processing Duration (P95)",
+      "type": "timeseries",
+      "id": 3,
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 0 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "min": 0,
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green" }, { "color": "orange", "value": 5 }, { "color": "red", "value": 10 }] }
+        }
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(order_processing_duration_seconds_bucket[5m])) by (le, status))",
+          "legendFormat": "{{ status }}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "title": "Order Status Breakdown",
+      "type": "piechart",
+      "id": 4,
+      "gridPos": { "h": 8, "w": 6, "x": 0, "y": 8 },
+      "options": {
+        "displayLabels": ["percent", "name"],
+        "legend": { "displayMode": "table", "placement": "right", "values": ["percent", "value"] },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": ["sum"],
+          "fields": "",
+          "values": false
+        }
+      },
+      "targets": [
+        {
+          "expr": "sum(orders_total) by (status)",
+          "legendFormat": "{{ status }}",
+          "refId": "A",
+          "instant": true
+        }
+      ]
+    },
+    {
+      "title": "Total Revenue (Cumulative)",
+      "type": "stat",
+      "id": 5,
+      "gridPos": { "h": 4, "w": 3, "x": 6, "y": 8 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyUSD",
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green" }] }
+        }
+      },
+      "targets": [
+        {
+          "expr": "sum(revenue_total)",
+          "legendFormat": "Total Revenue",
+          "refId": "A",
+          "instant": true
+        }
+      ]
+    },
+    {
+      "title": "Total Orders",
+      "type": "stat",
+      "id": 6,
+      "gridPos": { "h": 4, "w": 3, "x": 9, "y": 8 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green" }] }
+        }
+      },
+      "targets": [
+        {
+          "expr": "sum(orders_total)",
+          "legendFormat": "Total Orders",
+          "refId": "A",
+          "instant": true
+        }
+      ]
+    },
+    {
+      "title": "Products in Catalog",
+      "type": "stat",
+      "id": 7,
+      "gridPos": { "h": 4, "w": 3, "x": 12, "y": 8 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green" }] }
+        }
+      },
+      "targets": [
+        {
+          "expr": "sum(products_total)",
+          "legendFormat": "Total Products",
+          "refId": "A",
+          "instant": true
+        }
+      ]
+    },
+    {
+      "title": "Order Failure Rate",
+      "type": "gauge",
+      "id": 8,
+      "gridPos": { "h": 4, "w": 3, "x": 15, "y": 8 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green" }, { "color": "orange", "value": 5 }, { "color": "red", "value": 10 }] }
+        }
+      },
+      "targets": [
+        {
+          "expr": "sum(rate(orders_total{status=\"failed\"}[1h])) / sum(rate(orders_total[1h])) * 100",
+          "legendFormat": "Failure Rate",
+          "refId": "A",
+          "instant": true
+        }
+      ]
+    },
+    {
+      "title": "Orders by Status (Time Series)",
+      "type": "timeseries",
+      "id": 9,
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "min": 0
+        }
+      },
+      "targets": [
+        {
+          "expr": "sum(rate(orders_total[5m])) by (status)",
+          "legendFormat": "{{ status }}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "title": "Revenue Accumulation",
+      "type": "timeseries",
+      "id": 10,
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyUSD",
+          "min": 0
+        }
+      },
+      "targets": [
+        {
+          "expr": "sum(increase(revenue_total[1h])) by (currency)",
+          "legendFormat": "{{ currency }}",
+          "refId": "A"
+        }
+      ]
+    }
+  ]
+}

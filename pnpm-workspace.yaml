@@ -1,4 +1,12 @@
 packages:
   - "apps/*"
   - "packages/*"
-  - "services/*"
+allowBuilds:
+  '"': true
+  '[': true
+  ']': true
+  a: true
+  h: true
+  p: true
+  r: true
+  s: true

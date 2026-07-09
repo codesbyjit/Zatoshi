@@ -1,0 +1,21 @@
+export const config = {
+  port: parseInt(process.env.PORT || '3001', 10),
+  mongodbUri:
+    process.env.MONGODB_URI || 'mongodb://127.0.0.1:27018/ecommerce?replicaSet=rs0&directConnection=true',
+  redisUrl: process.env.REDIS_URL || 'redis://localhost:6379',
+  jwtSecret: process.env.JWT_SECRET || 'dev-secret',
+  jwtRefreshSecret: process.env.JWT_REFRESH_SECRET || 'dev-refresh-secret',
+  jwtAccessExpiresIn: '15m',
+  jwtRefreshExpiresIn: '7d',
+  minioEndpoint: process.env.MINIO_ENDPOINT || 'http://localhost:9000',
+  minioAccessKey: process.env.MINIO_ACCESS_KEY || 'minioadmin',
+  minioSecretKey: process.env.MINIO_SECRET_KEY || 'minioadmin',
+  minioBucketProducts: process.env.MINIO_BUCKET_PRODUCTS || 'products',
+  minioBucketAvatars: process.env.MINIO_BUCKET_AVATARS || 'avatars',
+  publicUrl: process.env.PUBLIC_URL || 'http://localhost:3001',
+  imageMaxSizeMB: 10,
+  imageMaxDimension: 1920,
+  imageQuality: 75,
+  nodeEnv: process.env.NODE_ENV || 'development',
+  corsOrigins: (process.env.CORS_ORIGINS || 'http://localhost:3000').split(','),
+} as const;

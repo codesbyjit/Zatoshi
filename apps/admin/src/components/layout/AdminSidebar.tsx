@@ -51,9 +51,9 @@ export function AdminSidebar({ mobileMenuOpen = false, onMobileClose, collapsed 
         <div className="flex items-center justify-between h-16 px-4 border-b border-[var(--sidebar-border)]">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-md bg-[var(--sidebar-bg-active)] flex items-center justify-center flex-shrink-0">
-              <span className="text-sm font-bold text-[var(--sidebar-text)]">A</span>
+              <span className="text-sm font-bold text-[var(--sidebar-text)]">Z</span>
             </div>
-            <span className="text-lg font-semibold text-[var(--sidebar-text)]">Admin</span>
+            <span className="text-lg font-semibold text-[var(--sidebar-text)]">Zatoshi</span>
           </div>
           <button
             onClick={onMobileClose}
@@ -125,9 +125,9 @@ export function AdminSidebar({ mobileMenuOpen = false, onMobileClose, collapsed 
         <div className="flex items-center h-16 px-4 border-b border-[var(--sidebar-border)]">
           <div className={clsx('flex items-center gap-3', collapsed && 'justify-center w-full')}>
             <div className="w-8 h-8 rounded-md bg-[var(--sidebar-bg-active)] flex items-center justify-center flex-shrink-0">
-              <span className="text-sm font-bold text-[var(--sidebar-text)]">A</span>
+              <span className="text-sm font-bold text-[var(--sidebar-text)]">Z</span>
             </div>
-            {!collapsed && <span className="text-lg font-semibold text-[var(--sidebar-text)]">Admin</span>}
+            {!collapsed && <span className="text-lg font-semibold text-[var(--sidebar-text)]">Zatoshi</span>}
           </div>
         </div>
 

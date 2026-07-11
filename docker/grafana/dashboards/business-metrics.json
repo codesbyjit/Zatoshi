@@ -3,7 +3,7 @@
   "uid": "business-metrics",
   "version": 1,
   "schemaVersion": 38,
-  "tags": ["ecommerce", "business"],
+  "tags": ["zatoshi", "business"],
   "timezone": "browser",
   "editable": true,
   "refresh": "30s",

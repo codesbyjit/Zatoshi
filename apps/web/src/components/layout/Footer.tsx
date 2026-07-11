@@ -11,7 +11,7 @@ export function Footer() {
               href="/"
               className="text-h3 font-bold text-[var(--color-text-primary)] no-underline"
             >
-              STORE
+              Zatoshi
             </Link>
             <p className="mt-3 text-sm text-[var(--color-text-muted)] max-w-[65ch]">
               Premium e-commerce platform offering quality products with exceptional customer service.
@@ -88,7 +88,7 @@ export function Footer() {
 
         {/* Bottom bar */}
         <div className="mt-12 border-t border-[var(--color-border)] pt-6 text-center text-sm text-[var(--color-text-muted)]">
-          <p>&copy; {new Date().getFullYear()} STORE. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Zatoshi. All rights reserved.</p>
         </div>
       </div>
     </footer>

@@ -3,7 +3,7 @@
   "uid": "api-metrics",
   "version": 1,
   "schemaVersion": 38,
-  "tags": ["ecommerce", "api"],
+  "tags": ["zatoshi", "api"],
   "timezone": "browser",
   "editable": true,
   "refresh": "10s",

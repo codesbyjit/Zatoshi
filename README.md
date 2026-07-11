@@ -1,4 +1,4 @@
-# E-Commerce Platform
+# Zatoshi
 
 A full-stack, microservices-based e-commerce platform built with Turborepo, Next.js 14, tRPC, MongoDB, and Redis. Features a customer-facing storefront, admin dashboard, background job worker, and comprehensive monitoring stack.
 
@@ -66,7 +66,7 @@ A full-stack, microservices-based e-commerce platform built with Turborepo, Next
 
 ```bash
 # 1. Clone and enter the repository
-git clone <repo-url> && cd demoEcom
+git clone <repo-url> && cd <project-directory>
 
 # 2. Copy environment variables
 cp .env.example .env
@@ -102,7 +102,7 @@ make logs        # Tail logs from all services
 ## Project Structure
 
 ```
-demoEcom/
+Zatoshi/
 ├── apps/
 │   ├── web/                    # Next.js storefront (port 3000)
 │   │   ├── src/app/            # App Router pages

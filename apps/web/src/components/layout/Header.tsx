@@ -72,7 +72,7 @@ export function Header() {
             href="/"
             className="flex shrink-0 items-center text-h3 font-bold text-[var(--color-text-primary)] no-underline transition-colors hover:text-[var(--color-accent)]"
           >
-            STORE
+            Zatoshi
           </Link>
 
           {/* Desktop Navigation */}

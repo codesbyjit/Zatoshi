@@ -3,7 +3,7 @@
   "uid": "database-metrics",
   "version": 1,
   "schemaVersion": 38,
-  "tags": ["ecommerce", "database", "cache"],
+  "tags": ["zatoshi", "database", "cache"],
   "timezone": "browser",
   "editable": true,
   "refresh": "15s",

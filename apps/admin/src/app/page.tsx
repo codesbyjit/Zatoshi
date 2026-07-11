@@ -201,7 +201,7 @@ export default function DashboardPage() {
       {/* Page title */}
       <div>
         <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">Dashboard</h1>
-        <p className="text-sm text-[var(--color-text-muted)] mt-1">Overview of your store performance</p>
+        <p className="text-sm text-[var(--color-text-muted)] mt-1">Overview of your Zatoshi store</p>
       </div>
 
       {/* Error banner */}

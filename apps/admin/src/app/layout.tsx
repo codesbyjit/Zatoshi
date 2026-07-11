@@ -3,8 +3,8 @@ import './globals.css';
 import { Providers } from './providers';
 
 export const metadata: Metadata = {
-  title: 'Admin Dashboard',
-  description: 'E-Commerce Admin Dashboard',
+  title: 'Zatoshi — Admin Dashboard',
+  description: 'Zatoshi Admin Dashboard',
 };
 
 export default function RootLayout({

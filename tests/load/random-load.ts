@@ -901,7 +901,7 @@ async function main(): Promise<void> {
   const opts = parseArgs();
   const countDesc = opts.count === Infinity ? 'unlimited' : String(opts.count);
   console.log(`${Colors.cyan}╔${'═'.repeat(58)}╗${Colors.reset}`);
-  console.log(`${Colors.cyan}║${Colors.reset}  E-Commerce API — Random Load Test`);
+  console.log(`${Colors.cyan}║${Colors.reset}  Zatoshi API — Random Load Test`);
   console.log(`${Colors.cyan}║${Colors.reset}  Target: ${API_BASE}`);
   console.log(`${Colors.cyan}║${Colors.reset}  Count:  ${countDesc}  |  Delay: ${opts.delay > 0 ? opts.delay + 'ms' : 'random 500-3000ms'}  |  Concurrency: ${opts.concurrency}`);
   console.log(`${Colors.cyan}╚${'═'.repeat(58)}╝${Colors.reset}`);

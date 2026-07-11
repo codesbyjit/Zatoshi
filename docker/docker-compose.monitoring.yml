@@ -3,7 +3,7 @@ version: '3.8'
 services:
   prometheus:
     image: prom/prometheus:v2.51.2
-    container_name: ecommerce-prometheus
+    container_name: zatoshi-prometheus
     ports:
       - "9090:9090"
     volumes:
@@ -21,7 +21,7 @@ services:
 
   grafana:
     image: grafana/grafana:10.4.2
-    container_name: ecommerce-grafana
+    container_name: zatoshi-grafana
     ports:
       - "3005:3000"
     environment:

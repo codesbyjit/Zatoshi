@@ -1,5 +1,5 @@
 groups:
-  - name: ecommerce
+  - name: zatoshi
     rules:
       # -----------------------------------------------------------------------
       # Symptom-based alerts — alert on user-facing symptoms, not causes

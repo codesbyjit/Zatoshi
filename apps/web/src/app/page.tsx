@@ -59,7 +59,7 @@ export default async function HomePage() {
               Discover Premium Products
             </h1>
             <p className="mt-4 text-body text-[var(--color-text-secondary)] max-w-md">
-              Shop the latest collection of high-quality products curated just for you.
+              Shop the latest collection at Zatoshi — high-quality products curated just for you.
               Free shipping on orders over $50.
             </p>
             <div className="mt-8 flex gap-4">

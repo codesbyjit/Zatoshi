@@ -13,18 +13,18 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: 'STORE',
-    template: '%s | STORE',
+    default: 'Zatoshi',
+    template: '%s | Zatoshi',
   },
   description:
-    'Premium e-commerce platform offering quality products with exceptional customer service. Shop the latest collection online.',
+    'Zatoshi — premium e-commerce platform offering quality products with exceptional customer service. Shop the latest collection online.',
   keywords: ['ecommerce', 'shop', 'store', 'online shopping'],
   openGraph: {
-    title: 'STORE — Premium E-Commerce',
-    description: 'Premium e-commerce platform offering quality products.',
+    title: 'Zatoshi',
+    description: 'Zatoshi — premium e-commerce platform offering quality products.',
     type: 'website',
     locale: 'en_US',
-    siteName: 'STORE',
+    siteName: 'Zatoshi',
   },
 };
 

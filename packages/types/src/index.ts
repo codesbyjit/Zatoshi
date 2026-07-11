@@ -10,5 +10,8 @@ export * from './schemas/order';
 export * from './schemas/cart';
 export * from './schemas/outbox';
 
+// Recommendation system types
+export * from './schemas/recommendations';
+
 // Monitoring types
 export * from './health';

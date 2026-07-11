@@ -15,6 +15,17 @@ import {
   CART_INDEXES,
   OUTBOX_COLLECTION,
   OUTBOX_INDEXES,
+  PRODUCT_ANALYTICS_COLLECTION,
+  PRODUCT_ANALYTICS_INDEXES,
+  USER_ACTIVITY_COLLECTION,
+  USER_ACTIVITY_INDEXES,
+  REVIEWS_COLLECTION,
+  REVIEWS_INDEXES,
+  RECOMMENDATION_CACHE_COLLECTION,
+  RECOMMENDATION_CACHE_INDEXES,
+  PRODUCT_ANALYTICS_VALIDATOR,
+  REVIEWS_VALIDATOR,
+  RECOMMENDATION_CACHE_VALIDATOR,
 } from '@repo/types';
 
 const logger = getLogger('api:db');
@@ -65,7 +76,14 @@ async function ensureIndexes(database: Db): Promise<void> {
 
   const indexConfigs: Array<{
     name: string;
-    indexes: ReadonlyArray<{ key: Record<string, unknown>; unique?: boolean; sparse?: boolean; weights?: Record<string, number> }>;
+    indexes: ReadonlyArray<{
+      key: Record<string, unknown>;
+      unique?: boolean;
+      sparse?: boolean;
+      weights?: Record<string, number>;
+      expireAfterSeconds?: number;
+    }>;
+    validator?: Record<string, unknown>;
   }> = [
     { name: USER_COLLECTION, indexes: USER_INDEXES as any },
     { name: PRODUCT_COLLECTION, indexes: PRODUCT_INDEXES as any },
@@ -73,12 +91,35 @@ async function ensureIndexes(database: Db): Promise<void> {
     { name: ORDER_COLLECTION, indexes: ORDER_INDEXES as any },
     { name: CART_COLLECTION, indexes: CART_INDEXES as any },
     { name: OUTBOX_COLLECTION, indexes: OUTBOX_INDEXES as any },
+    {
+      name: PRODUCT_ANALYTICS_COLLECTION,
+      indexes: PRODUCT_ANALYTICS_INDEXES as any,
+      validator: PRODUCT_ANALYTICS_VALIDATOR,
+    },
+    {
+      name: USER_ACTIVITY_COLLECTION,
+      indexes: USER_ACTIVITY_INDEXES as any,
+    },
+    {
+      name: REVIEWS_COLLECTION,
+      indexes: REVIEWS_INDEXES as any,
+      validator: REVIEWS_VALIDATOR,
+    },
+    {
+      name: RECOMMENDATION_CACHE_COLLECTION,
+      indexes: RECOMMENDATION_CACHE_INDEXES as any,
+      validator: RECOMMENDATION_CACHE_VALIDATOR,
+    },
   ];
 
-  for (const { name, indexes } of indexConfigs) {
-    // Create collection if it doesn't exist
+  for (const { name, indexes, validator } of indexConfigs) {
+    // Create collection if it doesn't exist with optional validation
     if (!collectionNames.includes(name)) {
-      await database.createCollection(name);
+      const options: Record<string, unknown> = {};
+      if (validator) {
+        options.validator = validator;
+      }
+      await database.createCollection(name, options);
     }
     const col = database.collection(name);
 
@@ -88,6 +129,7 @@ async function ensureIndexes(database: Db): Promise<void> {
         if (idx.unique) options.unique = true;
         if (idx.sparse) options.sparse = true;
         if (idx.weights) options.weights = idx.weights;
+        if (idx.expireAfterSeconds !== undefined) options.expireAfterSeconds = idx.expireAfterSeconds;
         await col.createIndex(idx.key as any, options);
       } catch (err) {
         logger.warn({ err, collection: name, index: idx.key }, 'Failed to create index');

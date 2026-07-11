@@ -8,6 +8,7 @@ import { StatsCard } from '@/components/dashboard/StatsCard';
 import { RevenueChart } from '@/components/dashboard/RevenueChart';
 import { OrdersChart } from '@/components/dashboard/OrdersChart';
 import { RecentOrders } from '@/components/dashboard/RecentOrders';
+import { TopProducts } from '@/components/dashboard/TopProducts';
 import { Button } from '@/components/ui/Button';
 import { TimeRangeSelector } from '@/components/analytics/TimeRangeSelector';
 import type { TimeRange } from '@/components/analytics/TimeRangeSelector';
@@ -295,6 +296,9 @@ export default function DashboardPage() {
           </Link>
         </div>
       </div>
+
+      {/* Top Products */}
+      <TopProducts />
     </div>
   );
 }

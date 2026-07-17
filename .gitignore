@@ -11,3 +11,6 @@ register-page.yml
 .next
 dist
 docs
+
+# Playwright test output (build artifacts)
+apps/web/playwright-report/

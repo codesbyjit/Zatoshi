@@ -8,7 +8,7 @@ export const config = {
 
   /** MongoDB connection string */
   mongodbUri:
-    process.env.MONGODB_URI || 'mongodb://127.0.0.1:27018/ecommerce?replicaSet=rs0&directConnection=true',
+    process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/ecommerce?replicaSet=rs0&directConnection=true',
 
   /** Redis connection string */
   redisUrl: process.env.REDIS_URL || 'redis://localhost:6379',

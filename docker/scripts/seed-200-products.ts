@@ -18,7 +18,7 @@ import { MongoClient, ObjectId, Int32 } from 'mongodb';
 
 const MONGODB_URI =
   process.env.MONGODB_URI ||
-  'mongodb://127.0.0.1:27018/ecommerce?replicaSet=rs0&directConnection=true';
+  'mongodb://127.0.0.1:27017/ecommerce?replicaSet=rs0&directConnection=true';
 
 // ──────────────────────────────────────────
 // Helpers

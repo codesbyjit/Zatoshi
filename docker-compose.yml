@@ -24,7 +24,7 @@ services:
     image: mongo:7
     command: ["--replSet", "rs0", "--bind_ip_all"]
     ports:
-      - "27018:27017"
+      - "27017:27017"
     volumes:
       - mongodb_data:/data/db
     healthcheck:
@@ -65,14 +65,14 @@ services:
 
   # ── MinIO ──────────────────────────────────────────────
   minio:
-    image: minio/minio
+    image: quay.io/minio/minio:latest
     command: server /data --console-address ":9001"
     ports:
       - "9000:9000"
       - "9001:9001"
     environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
+      MINIO_ROOT_USER: admin123
+      MINIO_ROOT_PASSWORD: admin123
     volumes:
       - minio_data:/data
     healthcheck:

@@ -6,14 +6,14 @@
  * - User activity (recently viewed, search history, click history)
  * - Product reviews (10-15 products, multiple users, varied ratings)
  *
- * Usage: MONGODB_URI="mongodb://127.0.0.1:27018/ecommerce?replicaSet=rs0&directConnection=true" npx tsx seed-recommendations.ts
+ * Usage: MONGODB_URI="mongodb://127.0.0.1:27017/ecommerce?replicaSet=rs0&directConnection=true" npx tsx seed-recommendations.ts
  */
 
 import { MongoClient, ObjectId } from 'mongodb';
 
 const MONGODB_URI =
   process.env.MONGODB_URI ||
-  'mongodb://127.0.0.1:27018/ecommerce?replicaSet=rs0&directConnection=true';
+  'mongodb://127.0.0.1:27017/ecommerce?replicaSet=rs0&directConnection=true';
 
 function pick<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];

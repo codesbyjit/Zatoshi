@@ -7,7 +7,7 @@
  * 3. Creates 40-60 orders spread across the last 90 days
  * 4. Provides realistic chart data for analytics endpoints
  *
- * Usage: MONGODB_URI="mongodb://127.0.0.1:27018/ecommerce?replicaSet=rs0&directConnection=true" npx tsx seed-orders.ts
+ * Usage: MONGODB_URI="mongodb://127.0.0.1:27017/ecommerce?replicaSet=rs0&directConnection=true" npx tsx seed-orders.ts
  */
 
 import { MongoClient, ObjectId } from 'mongodb';
@@ -19,7 +19,7 @@ import bcrypt from 'bcryptjs';
 
 const MONGODB_URI =
   process.env.MONGODB_URI ||
-  'mongodb://127.0.0.1:27018/ecommerce?replicaSet=rs0&directConnection=true';
+  'mongodb://127.0.0.1:27017/ecommerce?replicaSet=rs0&directConnection=true';
 const SALT_ROUNDS = 10;
 
 // Users to KEEP (all others will be deleted)

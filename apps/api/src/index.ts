@@ -5,11 +5,9 @@ import { createApp } from './app';
 import { getLogger } from '@repo/utils';
 
 const logger = getLogger('api:server');
-
 async function main(): Promise<void> {
   logger.info('Starting API server...');
 
-  // Connect to MongoDB
   try {
     await connectMongo();
     logger.info('MongoDB connected');
@@ -18,7 +16,6 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  // Connect to Redis (optional — degraded mode without it)
   const redisConnected = await connectRedis();
   if (redisConnected) {
     logger.info('Redis connected');
@@ -26,9 +23,7 @@ async function main(): Promise<void> {
     logger.warn('Redis unavailable — running in degraded mode (no caching, rate limiting, or pub/sub)');
   }
 
-  // Create and start the Express app
   const app = await createApp();
-
   app.listen(config.port, () => {
     logger.info(
       { port: config.port, env: config.nodeEnv },

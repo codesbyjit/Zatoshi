@@ -2,10 +2,6 @@ import pino from 'pino';
 import { randomUUID } from 'node:crypto';
 import type { IncomingMessage } from 'node:http';
 
-// ---------------------------------------------------------------------------
-// Sensitive field redaction
-// ---------------------------------------------------------------------------
-
 const REDACTED_FIELDS = [
   'password',
   'passwordHash',
@@ -16,33 +12,15 @@ const REDACTED_FIELDS = [
   'apiKey',
   'authorization',
   'cookie',
-  // 'set-cookie' is handled separately below (dashes are path separators in fast-redact).
 ];
 
 const HTTP_HEADERS_TO_REDACT = REDACTED_FIELDS.map(
   (f) => `req.headers.${f}`,
 );
 
-// Bracket notation required: fast-redact interprets dashes as path separators.
 const HEADER_REDACT_PATH_SET_COOKIE = 'req.headers["set-cookie"]';
-
-// ---------------------------------------------------------------------------
-// Environment detection
-// ---------------------------------------------------------------------------
-
-const isDev =
-  process.env.NODE_ENV === 'development' || process.env.NODE_ENV === undefined;
-
-// ---------------------------------------------------------------------------
-// Child logger cache
-// ---------------------------------------------------------------------------
-
+const isDev = process.env.NODE_ENV === 'development' || process.env.NODE_ENV === undefined;
 const childLoggers = new Map<string, pino.Logger>();
-
-// ---------------------------------------------------------------------------
-// Create base logger
-// ---------------------------------------------------------------------------
-
 const baseLogger: pino.Logger = pino({
   level: process.env.LOG_LEVEL || (isDev ? 'debug' : 'info'),
   redact: {
@@ -69,10 +47,6 @@ const baseLogger: pino.Logger = pino({
       }
     : undefined,
 });
-
-// ---------------------------------------------------------------------------
-// Context / child logger helpers
-// ---------------------------------------------------------------------------
 
 /**
  * Get (or create) a child logger for a specific service/context.
@@ -108,9 +82,5 @@ export function getRequestLogger(
   const logger = getLogger(name);
   return logger.child({ correlationId });
 }
-
-// ---------------------------------------------------------------------------
-// Default export — the root logger
-// ---------------------------------------------------------------------------
 
 export default baseLogger;

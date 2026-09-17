@@ -1,7 +1,6 @@
 export const config = {
   port: parseInt(process.env.PORT || '3001', 10),
-  mongodbUri:
-    process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/ecommerce?replicaSet=rs0&directConnection=true',
+  mongodbUri: process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/ecommerce?replicaSet=rs0&directConnection=true',
   redisUrl: process.env.REDIS_URL || 'redis://localhost:6379',
   jwtSecret: process.env.JWT_SECRET || 'dev-secret',
   jwtRefreshSecret: process.env.JWT_REFRESH_SECRET || 'dev-refresh-secret',

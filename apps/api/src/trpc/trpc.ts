@@ -4,9 +4,7 @@ import { getLogger } from '@repo/utils';
 
 const logger = getLogger('api:trpc');
 
-/**
- * tRPC instance with error formatting for consistent error responses.
- */
+// tRPC instance with error formatting for consistent error responses.
 export const t = initTRPC.context<Context>().create({
   errorFormatter({ shape, error }) {
     logger.debug(
@@ -22,7 +20,6 @@ export const t = initTRPC.context<Context>().create({
       ...shape,
       data: {
         ...shape.data,
-        // In production, don't leak internal error details
         ...(process.env.NODE_ENV === 'production'
           ? { stack: undefined }
           : {}),
@@ -31,15 +28,10 @@ export const t = initTRPC.context<Context>().create({
   },
 });
 
-/**
- * Public procedure — no authentication required.
- */
+// public Procedure - no auth needed
 export const publicProcedure = t.procedure;
 
-/**
- * Protected procedure — requires a valid JWT token.
- * Throws UNAUTHORIZED if user is not authenticated.
- */
+// Protected procedure — requires a valid JWT token.
 export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
   if (!ctx.user) {
     throw new TRPCError({
@@ -55,10 +47,7 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
   });
 });
 
-/**
- * Admin procedure — requires admin role.
- * Throws FORBIDDEN if user is not an admin.
- */
+// Admin procedure — requires admin role.
 export const adminProcedure = t.procedure.use(({ ctx, next }) => {
   if (!ctx.user) {
     throw new TRPCError({

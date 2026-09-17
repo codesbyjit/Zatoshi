@@ -7,7 +7,7 @@ A full-stack, microservices-based e-commerce platform built with Turborepo, Next
 ## Architecture Overview
 
 ```
-┌─────────────────────────────────────────────────────────-┐
+┌──────────────────────────────────────────────────────────┐
 │                      User Browser                        │
 └──────────┬──────────────────────────────────┬────────────┘
            │                                  │
@@ -18,7 +18,7 @@ A full-stack, microservices-based e-commerce platform built with Turborepo, Next
     └──────┬───────┘                  └───────┬───────┘
            │ HTTP/tRPC                        │ HTTP/tRPC
            ▼                                  ▼
-    ┌──────────────────────────────────────────────-┐
+    ┌───────────────────────────────────────────────┐
     │            API Gateway (:3001/api)            │
     │      Express + tRPC + Zod Validation          │
     │     Auth │ Products │ Orders │ Cart │ Upload  │

@@ -13,10 +13,8 @@ export interface RateLimitResult {
 
 /**
  * Custom Redis-based sliding window rate limiter.
- *
  * Uses a sorted set per key where each request is a member with score = current timestamp.
  * The window is [now - windowMs, now].
- *
  * @param key - Unique rate limit key (e.g. `rate-limit:auth:1.2.3.4`)
  * @param maxRequests - Maximum number of requests in the window
  * @param windowMs - Window duration in milliseconds
@@ -54,7 +52,6 @@ export async function checkRateLimit(
   const results = await multi.exec();
 
   if (!results) {
-    // Redis error — allow the request
     return { allowed: true, remaining: maxRequests - 1, resetTime: now + windowMs, limit: maxRequests };
   }
 
@@ -67,8 +64,7 @@ export async function checkRateLimit(
 }
 
 /**
- * Creates an Express middleware for rate limiting.
- *
+ * middleware for rate limiting.
  * @param getKey - Function to derive the rate limit key from the request
  * @param maxRequests - Maximum requests in the window
  * @param windowMs - Window duration in milliseconds
@@ -113,19 +109,18 @@ export function createRateLimiter(
   };
 }
 
-/**
- * Pre-built rate limiters for auth and general API endpoints.
- */
+// Pre-built rate limiters for auth API endpoints.
 export const authRateLimiter = createRateLimiter(
   (req) => req.ip || 'unknown',
-  1000, // 1000 requests/minute (generous for dev/test)
+  100, // 100 requests/minute
   60 * 1000, // per minute
   'auth',
 );
 
+// Pre-built rate limiters for api API endpoints.
 export const apiRateLimiter = createRateLimiter(
   (req) => req.ip || 'unknown',
-  1000, // 1000 requests/minute (generous for dev/test)
-  60 * 1000, // per minute
+  1000, // 1000 requests/minute
+  60 * 1000,
   'api',
 );

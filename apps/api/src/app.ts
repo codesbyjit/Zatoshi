@@ -12,34 +12,20 @@ import imagesRouter from './routers/images';
 import { globalErrorHandler } from './middleware/error';
 import { getDb } from './db/client';
 import { getRedis } from './db/redis';
-import {
-  HealthCheck,
-  ReadinessCheck,
-  getLogger,
-} from '@repo/utils';
-import {
-  metricsMiddleware,
-  httpMetricsMiddleware,
-} from '@repo/metrics';
+import { HealthCheck, ReadinessCheck, getLogger } from '@repo/utils';
+import { metricsMiddleware, httpMetricsMiddleware } from '@repo/metrics';
 
 const logger = getLogger('api:app');
-
-/**
- * Create and configure the Express application.
- */
 export async function createApp(): Promise<express.Application> {
   const app = express();
 
-  // ── CORS ──────────────────────────────────────────────────
+  // cors
   const allowedOrigins = config.corsOrigins;
   app.use(
     cors({
       origin(origin, callback) {
-        // Allow requests with no origin (server-to-server, curl, health checks)
         if (!origin) return callback(null, true);
-        // Allow if origin is in the configured list
         if (allowedOrigins.includes(origin)) return callback(null, true);
-        // In development, allow all localhost origins
         if (config.nodeEnv === 'development') {
           if (
             origin.startsWith('http://localhost:') ||
@@ -63,31 +49,18 @@ export async function createApp(): Promise<express.Application> {
     }),
   );
 
-  // ── Body Parsing ──────────────────────────────────────────
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true }));
-
-  // ── Cookie Parsing (for httpOnly JWT cookies) ────────────
   app.use(cookieParser());
-
-  // ── Correlation ID ───────────────────────────────────────
   app.use(correlationMiddleware);
-
-  // ── Prometheus Metrics ───────────────────────────────────
   app.use(httpMetricsMiddleware);
   app.use(metricsMiddleware);
-
-  // ── JWT Auth (extract user if token present) ─────────────
   app.use(authMiddleware);
-
-  // ── Image Upload & Serving ───────────────────────────────
-  // Mount at root: upload is POST /api/v1/upload/..., serve is GET /images/...
   app.use(imagesRouter);
 
-  // ── Health Checks ────────────────────────────────────────
+  // health
   const healthCheck = new HealthCheck();
   const readinessCheck = new ReadinessCheck(healthCheck);
-
   healthCheck.register('mongodb', async () => {
     const db = getDb();
     await db.admin().ping();
@@ -112,15 +85,10 @@ export async function createApp(): Promise<express.Application> {
     res.status(httpStatus).json(status);
   });
 
-  // ── tRPC API ─────────────────────────────────────────────
-  // Apply rate limiting to auth routes
+  // tRPC
   const authPath = '/trpc/auth.*';
   app.use(authPath, authRateLimiter);
-
-  // General API rate limiting
   app.use('/trpc', apiRateLimiter);
-
-  // tRPC middleware
   app.use(
     '/trpc',
     createExpressMiddleware({
@@ -129,7 +97,7 @@ export async function createApp(): Promise<express.Application> {
     }),
   );
 
-  // ── 404 Handler ─────────────────────────────────────────
+  // error-handling
   app.use((_req, res) => {
     res.status(404).json({
       error: {
@@ -139,7 +107,6 @@ export async function createApp(): Promise<express.Application> {
     });
   });
 
-  // ── Global Error Handler ────────────────────────────────
   app.use(globalErrorHandler);
 
   logger.info(

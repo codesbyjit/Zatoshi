@@ -1,9 +1,7 @@
 import multer from 'multer';
 import { config } from '../config';
 
-/**
- * Allowed image MIME types for upload.
- */
+// Allowed image MIME types for upload.
 const ALLOWED_MIME_TYPES = [
   'image/jpeg',
   'image/png',
@@ -15,13 +13,6 @@ const ALLOWED_MIME_TYPES = [
 
 const maxFileSize = config.imageMaxSizeMB * 1024 * 1024; // Convert MB to bytes
 
-/**
- * Multer middleware configured with memory storage.
- *
- * - Stores files in memory as Buffers for sharp processing
- * - Limits file size to `config.imageMaxSizeMB` MB
- * - Rejects non-image file types
- */
 export const uploadMiddleware = multer({
   storage: multer.memoryStorage(),
   limits: {

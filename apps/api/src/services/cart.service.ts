@@ -16,10 +16,7 @@ const logger = getLogger('api:cart-service');
 
 const CART_TTL_MS = CART_TTL_SECONDS * 1000;
 
-/**
- * Convert a string ID to ObjectId if it matches MongoDB's 24-hex-char format.
- * This supports both ObjectId-based and UUID-based product IDs.
- */
+// Convert a string ID to ObjectId if it matches MongoDB's 24-hex-char format
 function toObjectId(id: string): ObjectId | string {
   if (/^[a-f0-9]{24}$/i.test(id)) {
     return new ObjectId(id);
@@ -27,28 +24,25 @@ function toObjectId(id: string): ObjectId | string {
   return id;
 }
 
-/** Helper to build a Record filter match for `_id` that accepts both string and ObjectId. */
+// Helper to build a Record filter match for `_id` that accepts both string and ObjectId
 function idFilter(id: string): Record<string, unknown> {
   return { _id: toObjectId(id) };
 }
 
-/**
- * Get the current cart for a user or session.
- */
+
+// Get the current cart for a user or session
 export async function getCart(
   userId?: string,
   sessionId?: string,
 ): Promise<Cart> {
   const db = getDb();
   const carts = db.collection<Cart>(CART_COLLECTION);
-
   let query: Record<string, unknown> = {};
   if (userId) {
     query = { userId };
   } else if (sessionId) {
     query = { sessionId };
   } else {
-    // Return empty cart
     return {
       _id: randomUUID(),
       items: [],
@@ -58,7 +52,6 @@ export async function getCart(
 
   const cart = await carts.findOne(query);
   if (!cart) {
-    // Create empty cart
     const now = new Date();
     const newCart: Cart = {
       _id: randomUUID(),
@@ -74,9 +67,7 @@ export async function getCart(
   return cart;
 }
 
-/**
- * Add an item to the cart (upsert — merge if product already exists).
- */
+// Add an item to the cart (upsert — merge if product already exists)
 export async function addCartItem(
   cartId: string,
   item: {
@@ -88,7 +79,6 @@ export async function addCartItem(
   const db = getDb();
   const carts = db.collection<Cart>(CART_COLLECTION);
 
-  // Fetch product to get current price and details
   const product = await db
     .collection<Product>(PRODUCT_COLLECTION)
     .findOne({ ...idFilter(item.productId), isActive: true });
@@ -116,7 +106,6 @@ export async function addCartItem(
     quantity: item.quantity,
   };
 
-  // Check if the item already exists in cart (same productId + same variantInfo)
   const existingItem = await carts.findOne({
     _id: cartId,
     items: {
@@ -128,7 +117,6 @@ export async function addCartItem(
   });
 
   if (existingItem) {
-    // Item exists — update quantity
     await carts.updateOne(
       {
         _id: cartId,
@@ -146,7 +134,6 @@ export async function addCartItem(
       },
     );
   } else {
-    // New item — push to array
     await carts.updateOne(
       { _id: cartId },
       {
@@ -173,9 +160,6 @@ export async function addCartItem(
   return updated;
 }
 
-/**
- * Update the quantity of a cart item.
- */
 export async function updateCartItemQuantity(
   cartId: string,
   productId: string,
@@ -186,11 +170,9 @@ export async function updateCartItemQuantity(
   const carts = db.collection<Cart>(CART_COLLECTION);
 
   if (quantity <= 0) {
-    // Remove item if quantity is 0 or negative
     return removeCartItem(cartId, productId, variantInfo);
   }
 
-  // Check inventory
   const product = await db
     .collection<Product>(PRODUCT_COLLECTION)
     .findOne({ ...idFilter(productId), isActive: true });
@@ -240,9 +222,6 @@ export async function updateCartItemQuantity(
   return result;
 }
 
-/**
- * Remove an item from the cart.
- */
 export async function removeCartItem(
   cartId: string,
   productId: string,
@@ -277,9 +256,6 @@ export async function removeCartItem(
   return result;
 }
 
-/**
- * Clear all items from the cart.
- */
 export async function clearCart(cartId: string): Promise<Cart> {
   const db = getDb();
   const carts = db.collection<Cart>(CART_COLLECTION);

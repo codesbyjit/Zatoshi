@@ -1,11 +1,3 @@
-/**
- * Analytics service for tracking product and user activity.
- *
- * Provides a high-level API for recording events. Delegates the actual
- * storage to the recommendation service's primitives (incrementProductCounter,
- * trackRecentlyViewed, etc.) to ensure consistency with the data types
- * defined in @repo/types.
- */
 import { getDb } from '../db/client';
 import { getLogger } from '@repo/utils';
 import {
@@ -27,12 +19,6 @@ import {
 
 const logger = getLogger('api:analytics-service');
 
-// ── Tracking Functions ──────────────────────────────────────────────
-
-/**
- * Record a product view.
- * Increments totalViews counter and updates user's recently viewed.
- */
 export async function trackProductView(
   productId: string,
   userId?: string,
@@ -67,9 +53,7 @@ export async function trackProductView(
   }
 }
 
-/**
- * Record a product click.
- */
+// Record a product click.
 export async function trackProductClick(
   productId: string,
   userId?: string,
@@ -84,9 +68,7 @@ export async function trackProductClick(
   }
 }
 
-/**
- * Record an add-to-cart event.
- */
+// Record an add-to-cart event.
 export async function trackAddToCart(
   productId: string,
 ): Promise<void> {
@@ -97,9 +79,7 @@ export async function trackAddToCart(
   }
 }
 
-/**
- * Record a remove-from-cart event.
- */
+// Record a remove-from-cart event.
 export async function trackRemoveFromCart(
   productId: string,
 ): Promise<void> {
@@ -110,9 +90,7 @@ export async function trackRemoveFromCart(
   }
 }
 
-/**
- * Record purchases.
- */
+// Record purchases.
 export async function trackPurchase(
   productIds: string[],
   userId?: string,
@@ -138,9 +116,7 @@ export async function trackPurchase(
   }
 }
 
-/**
- * Record a search query.
- */
+// Record a search query.
 export async function trackSearch(
   query: string,
   userId?: string,
@@ -154,9 +130,7 @@ export async function trackSearch(
   }
 }
 
-/**
- * Record a share event.
- */
+// Record a share event.
 export async function trackShare(
   productId: string,
 ): Promise<void> {
@@ -167,11 +141,7 @@ export async function trackShare(
   }
 }
 
-// ── Query Functions ─────────────────────────────────────────────────
-
-/**
- * Get analytics for a single product.
- */
+// Get analytics for a single product.
 export async function getProductAnalytics(
   productId: string,
 ): Promise<ProductAnalytics | null> {
@@ -180,9 +150,7 @@ export async function getProductAnalytics(
   return col.findOne({ _id: productId });
 }
 
-/**
- * Get the current user's activity profile.
- */
+// Get the current user's activity profile.
 export async function getUserActivity(
   userId: string,
 ): Promise<UserActivity | null> {
@@ -191,7 +159,5 @@ export async function getUserActivity(
   return col.findOne({ _id: userId });
 }
 
-/**
- * Get trending products (delegates to trending service).
- */
+// Get trending products (delegates to trending service).
 export { recGetTrending as getTrendingProducts };

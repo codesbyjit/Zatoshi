@@ -34,14 +34,10 @@ export interface AuthResult {
   tokens: TokenPair;
 }
 
-/**
- * Register a new user account.
- */
 export async function register(input: RegisterInput): Promise<AuthResult> {
   const db = getDb();
   const users = db.collection<User>(USER_COLLECTION);
 
-  // Check if email already exists
   const existing = await users.findOne({ email: input.email.toLowerCase() });
   if (existing) {
     throw new TRPCError({
@@ -50,7 +46,6 @@ export async function register(input: RegisterInput): Promise<AuthResult> {
     });
   }
 
-  // Hash password
   const passwordHash = await hashPassword(input.password);
 
   const now = new Date();
@@ -77,9 +72,6 @@ export async function register(input: RegisterInput): Promise<AuthResult> {
   return { user: safeUser, tokens };
 }
 
-/**
- * Login with email and password.
- */
 export async function login(input: LoginInput): Promise<AuthResult> {
   const db = getDb();
   const users = db.collection<User>(USER_COLLECTION);
@@ -111,13 +103,10 @@ export async function login(input: LoginInput): Promise<AuthResult> {
   return { user: safeUser, tokens };
 }
 
-/**
- * Refresh an expired access token using a valid refresh token.
- */
+// Refresh an expired access token using a valid refresh token.
 export async function refreshToken(
   refreshToken: string,
 ): Promise<TokenPair> {
-  // Check blacklist first
   const blacklisted = await isRefreshTokenBlacklisted(refreshToken);
   if (blacklisted) {
     throw new TRPCError({
@@ -126,7 +115,6 @@ export async function refreshToken(
     });
   }
 
-  // Verify the refresh token
   let payload: JwtPayload;
   try {
     payload = verifyRefreshToken(refreshToken);
@@ -137,10 +125,8 @@ export async function refreshToken(
     });
   }
 
-  // Verify the refresh token matches what we have stored in Redis
   const storedToken = await getStoredRefreshToken(payload.userId);
   if (storedToken && storedToken !== refreshToken) {
-    // Token mismatch — possible token reuse attack, revoke all tokens for this user
     await blacklistRefreshToken(refreshToken);
     await deleteRefreshToken(payload.userId);
     throw new TRPCError({
@@ -149,16 +135,13 @@ export async function refreshToken(
     });
   }
 
-  // Blacklist the old refresh token (rotation)
   await blacklistRefreshToken(refreshToken);
 
-  // Generate new token pair
   const tokens = generateTokenPair({
     userId: payload.userId,
     role: payload.role,
   });
 
-  // Store the new refresh token in Redis
   await storeRefreshToken(payload.userId, tokens.refreshToken);
 
   logger.info({ userId: payload.userId }, 'Tokens refreshed');
@@ -166,27 +149,19 @@ export async function refreshToken(
   return tokens;
 }
 
-/**
- * Logout by blacklisting the refresh token and removing from Redis.
- */
+// Logout by blacklisting the refresh token and removing from Redis
 export async function logout(refreshToken: string): Promise<void> {
-  // Even if the token is invalid, blacklist it to be safe
   try {
     const payload = verifyRefreshToken(refreshToken);
     await blacklistRefreshToken(refreshToken);
     await deleteRefreshToken(payload.userId);
     logger.info({ userId: payload.userId }, 'User logged out');
   } catch {
-    // Token was already invalid — just ensure it's blacklisted
     await blacklistRefreshToken(refreshToken);
   }
 }
 
-/**
- * Convert a string ID to ObjectId if it matches MongoDB's 24-hex-char format.
- * This allows querying users seeded with ObjectIds as well as those created
- * as string UUIDs via `randomUUID()`.
- */
+ // Convert a string ID to ObjectId if it matches MongoDB's 24-hex-char format.
 function toObjectId(id: string): ObjectId | string {
   if (/^[a-f0-9]{24}$/i.test(id)) {
     return new ObjectId(id);
@@ -199,9 +174,7 @@ function idFilter(id: string): Record<string, unknown> {
   return { _id: toObjectId(id) };
 }
 
-/**
- * Get a user by ID (without password hash).
- */
+// Get a user by ID (without password hash).
 export async function getUser(
   userId: string,
 ): Promise<Omit<User, 'passwordHash'> | null> {

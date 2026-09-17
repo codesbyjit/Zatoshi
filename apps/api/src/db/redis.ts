@@ -36,9 +36,6 @@ export async function connectRedis(): Promise<Redis | null> {
     logger.info('Redis ready');
   });
 
-  // Wait for ready event, or handle connection failure gracefully
-  // Note: use 'close' not 'error' because ioredis emits 'error' first
-  // (status still 'reconnecting') then 'close' (status becomes 'close').
   try {
     await new Promise<void>((resolve, reject) => {
       const onReady = () => {
@@ -90,10 +87,7 @@ export async function disconnectRedis(): Promise<void> {
   }
 }
 
-/**
- * Add a refresh token to the blacklist with TTL matching the token expiry.
- * No-op when Redis is unavailable (degraded mode).
- */
+// Add a refresh token to the blacklist with TTL matching the token expiry
 export async function blacklistRefreshToken(
   token: string,
   ttlSeconds: number = 7 * 24 * 3600,
@@ -103,10 +97,7 @@ export async function blacklistRefreshToken(
   await r.set(`blacklist:refresh:${token}`, '1', 'EX', ttlSeconds);
 }
 
-/**
- * Check if a refresh token is blacklisted.
- * Returns false when Redis is unavailable (degraded mode).
- */
+// Check if a refresh token is blacklisted
 export async function isRefreshTokenBlacklisted(
   token: string,
 ): Promise<boolean> {
@@ -116,10 +107,7 @@ export async function isRefreshTokenBlacklisted(
   return result !== null;
 }
 
-/**
- * Store a refresh token in Redis associated with a user.
- * No-op when Redis is unavailable (degraded mode).
- */
+// Store a refresh token in Redis associated with a user
 export async function storeRefreshToken(
   userId: string,
   refreshToken: string,
@@ -130,10 +118,7 @@ export async function storeRefreshToken(
   await r.set(`refresh:${userId}`, refreshToken, 'EX', ttlSeconds);
 }
 
-/**
- * Get the stored refresh token for a user.
- * Returns null when Redis is unavailable or token not found.
- */
+// Get the stored refresh token for a user
 export async function getStoredRefreshToken(
   userId: string,
 ): Promise<string | null> {
@@ -142,10 +127,7 @@ export async function getStoredRefreshToken(
   return r.get(`refresh:${userId}`);
 }
 
-/**
- * Delete a stored refresh token for a user.
- * No-op when Redis is unavailable (degraded mode).
- */
+// Delete a stored refresh token for a user
 export async function deleteRefreshToken(
   userId: string,
 ): Promise<void> {

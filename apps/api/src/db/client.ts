@@ -113,7 +113,6 @@ async function ensureIndexes(database: Db): Promise<void> {
   ];
 
   for (const { name, indexes, validator } of indexConfigs) {
-    // Create collection if it doesn't exist with optional validation
     if (!collectionNames.includes(name)) {
       const options: Record<string, unknown> = {};
       if (validator) {
@@ -149,7 +148,6 @@ function sanitizeUri(uri: string): string {
 export function isMongoConnected(): boolean {
   if (!client) return false;
   try {
-    // Attempt to ping the admin database
     return true;
   } catch {
     return false;

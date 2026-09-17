@@ -14,14 +14,7 @@ import type {
   ProductVariant,
 } from '@repo/types';
 
-// ──────────────────────────────────────────
-// Factory helpers: build partial documents for tests & seed data
-// Each function returns safe defaults that can be overridden.
-// ──────────────────────────────────────────
-
 let _objectIdCounter = 0;
-
-/** Generate a unique, deterministic ObjectId-like string */
 export function mockObjectId(): string {
   _objectIdCounter++;
   const timestamp = Math.floor(Date.now() / 1000).toString(16).padStart(8, '0');
@@ -29,14 +22,9 @@ export function mockObjectId(): string {
   return timestamp + counter.slice(0, 16);
 }
 
-/** Generate a unique order number */
 export function mockOrderNumber(seq: number): string {
   return `ORD-${String(seq).padStart(6, '0')}`;
 }
-
-// ──────────────────────────────────────────
-// User Factory
-// ──────────────────────────────────────────
 
 export function buildUser(overrides: Partial<User> = {}): User {
   return {
@@ -63,10 +51,6 @@ export function buildCreateUserInput(
   };
 }
 
-// ──────────────────────────────────────────
-// Category Factory
-// ──────────────────────────────────────────
-
 export function buildCategory(overrides: Partial<Category> = {}): Category {
   return {
     _id: mockObjectId(),
@@ -90,10 +74,6 @@ export function buildCreateCategoryInput(
     ...overrides,
   };
 }
-
-// ──────────────────────────────────────────
-// Product Factory
-// ──────────────────────────────────────────
 
 export function buildProductVariant(
   overrides: Partial<ProductVariant> = {},
@@ -149,10 +129,6 @@ export function buildCreateProductInput(
     ...overrides,
   };
 }
-
-// ──────────────────────────────────────────
-// Order Factory
-// ──────────────────────────────────────────
 
 export function buildShippingAddress(
   overrides: Partial<ShippingAddress> = {},
@@ -223,10 +199,6 @@ export function buildCreateOrderInput(
   };
 }
 
-// ──────────────────────────────────────────
-// Cart Factory
-// ──────────────────────────────────────────
-
 export function buildCartItem(overrides: Partial<CartItem> = {}): CartItem {
   return {
     productId: mockObjectId(),
@@ -246,3 +218,4 @@ export function buildCart(overrides: Partial<Cart> = {}): Cart {
     ...overrides,
   };
 }
+

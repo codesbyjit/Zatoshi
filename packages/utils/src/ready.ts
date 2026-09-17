@@ -15,11 +15,6 @@ export class ReadinessCheck {
     this.health = health;
   }
 
-  /**
-   * Perform a readiness assessment.
-   * Returns a ReadinessStatus indicating whether the service is ready
-   * to accept traffic.
-   */
   async check(): Promise<ReadinessStatus> {
     const status = await this.health.check();
     const checks: ReadinessStatus['checks'] = {};

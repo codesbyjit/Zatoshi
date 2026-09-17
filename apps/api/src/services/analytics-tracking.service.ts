@@ -9,8 +9,6 @@ import { Double } from 'mongodb';
 
 const logger = getLogger('api:analytics-tracking');
 
-// ─── Product Analytics ─────────────────────────────
-
 async function ensureProductAnalytics(productId: string): Promise<void> {
   const db = getDb();
   const analytics = db.collection(PRODUCT_ANALYTICS_COLLECTION);
@@ -60,8 +58,6 @@ async function incrementProductAnalytics(
   );
 }
 
-// ─── User Activity ─────────────────────────────────
-
 async function ensureUserActivity(userId: string): Promise<void> {
   const db = getDb();
   const activity = db.collection(USER_ACTIVITY_COLLECTION);
@@ -101,8 +97,6 @@ async function updateUserLastActive(userId: string): Promise<void> {
     { $set: { lastActive: new Date(), updatedAt: new Date() } },
   );
 }
-
-// ─── Public API ────────────────────────────────────
 
 export async function trackProductView(
   productId: string,

@@ -10,18 +10,14 @@ import { getLogger } from '@repo/utils';
 
 const logger = getLogger('api:trpc-context');
 
-/**
- * tRPC context that provides db, redis, and the authenticated user.
- */
+// tRPC context that provides db, redis, and the authenticated user.
 export async function createContext(
   opts: CreateExpressContextOptions,
 ): Promise<Context> {
   const { req, res } = opts;
 
-  // Extract user from JWT if present (Bearer header OR httpOnly cookie)
   let user: JwtPayload | null = null;
 
-  // Prefer Authorization header, fall back to accessToken cookie
   const authHeader = req.headers.authorization;
   const token =
     authHeader && authHeader.startsWith('Bearer ')
@@ -36,7 +32,6 @@ export async function createContext(
     }
   }
 
-  // Get the request ID from middleware
   const requestId = (req as any).requestId || 'unknown';
 
   let db: Db;

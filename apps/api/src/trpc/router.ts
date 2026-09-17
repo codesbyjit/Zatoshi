@@ -10,9 +10,6 @@ import { recommendationsRouter as recommendationRouter } from '../routers/recomm
 import { analyticsTrackingRouter } from '../routers/analytics-tracking';
 import { reviewsRouter } from '../routers/reviews';
 
-/**
- * Root tRPC router — merges all sub-routers.
- */
 export const appRouter = t.router({
   auth: authRouter,
   product: productRouter,

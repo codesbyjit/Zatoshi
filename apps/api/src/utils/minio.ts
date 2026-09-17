@@ -20,9 +20,6 @@ export function getMinioClient(): Minio.Client {
   return minioClient;
 }
 
-/**
- * Ensure a bucket exists, creating it if necessary.
- */
 async function ensureBucket(bucket: string): Promise<void> {
   const client = getMinioClient();
   const exists = await client.bucketExists(bucket);
@@ -34,7 +31,6 @@ async function ensureBucket(bucket: string): Promise<void> {
 
 /**
  * Generate a presigned PUT URL for direct browser upload to MinIO.
- *
  * @param bucket - MinIO bucket name (e.g. 'products', 'avatars')
  * @param fileName - The object key/path in the bucket
  * @param contentType - MIME type of the file
@@ -48,16 +44,13 @@ export async function getPresignedPutUrl(
   expirySeconds: number = 3600,
 ): Promise<string> {
   await ensureBucket(bucket);
-
   const client = getMinioClient();
   const url = await client.presignedPutObject(bucket, fileName, expirySeconds);
-
   return url;
 }
 
 /**
  * Generate a presigned GET URL for reading from MinIO.
- *
  * @param bucket - MinIO bucket name
  * @param fileName - The object key/path in the bucket
  * @param expirySeconds - URL expiry in seconds (default 3600)
@@ -74,7 +67,6 @@ export async function getPresignedGetUrl(
 
 /**
  * Upload a buffer directly to a MinIO bucket.
- *
  * @param bucket - MinIO bucket name
  * @param key - The object key/path in the bucket
  * @param buffer - File contents as a Buffer
@@ -100,7 +92,6 @@ export async function putObject(
 
 /**
  * Get a readable stream and stats for an object from MinIO.
- *
  * @param bucket - MinIO bucket name
  * @param key - The object key/path in the bucket
  * @returns Object containing the readable stream and stat information

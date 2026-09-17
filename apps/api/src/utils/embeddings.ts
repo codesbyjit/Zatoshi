@@ -1,13 +1,4 @@
-/**
- * Simple text embedding utilities for the recommendation system.
- *
- * Generates term-frequency vectors from text and computes cosine similarity.
- * This is a lightweight bag-of-words approach — no external ML dependencies.
- */
-
-/**
- * Tokenize text into lowercase words, stripping punctuation.
- */
+// create token payload
 export function tokenize(text: string): string[] {
   return text
     .toLowerCase()
@@ -16,15 +7,12 @@ export function tokenize(text: string): string[] {
     .filter(Boolean);
 }
 
-/**
- * Build a term-frequency vector from an array of tokens.
- */
+// Build a term-frequency vector from an array of tokens
 export function termFrequency(tokens: string[]): Map<string, number> {
   const tf = new Map<string, number>();
   for (const token of tokens) {
     tf.set(token, (tf.get(token) ?? 0) + 1);
   }
-  // Normalize by total token count
   const total = tokens.length || 1;
   for (const [key, count] of tf) {
     tf.set(key, count / total);
@@ -32,15 +20,11 @@ export function termFrequency(tokens: string[]): Map<string, number> {
   return tf;
 }
 
-/**
- * Compute cosine similarity between two term-frequency vectors.
- * Returns a value between 0 (completely dissimilar) and 1 (identical).
- */
+// Compute cosine similarity between two term-frequency vectors
 export function cosineSimilarity(
   vecA: Map<string, number>,
   vecB: Map<string, number>,
 ): number {
-  // Collect all unique terms
   const allTerms = new Set([...vecA.keys(), ...vecB.keys()]);
 
   let dotProduct = 0;
@@ -59,9 +43,7 @@ export function cosineSimilarity(
   return magnitude === 0 ? 0 : dotProduct / magnitude;
 }
 
-/**
- * Compute text similarity between two strings (0–1).
- */
+// Compute text similarity between two strings (0–1).
 export function textSimilarity(textA: string, textB: string): number {
   const tokensA = tokenize(textA);
   const tokensB = tokenize(textB);
@@ -70,10 +52,7 @@ export function textSimilarity(textA: string, textB: string): number {
   return cosineSimilarity(tfA, tfB);
 }
 
-/**
- * Generate a simple embedding vector for text (array of term weights).
- * Useful for products with name + description + tags combined.
- */
+// Generate a simple embedding vector for text (array of term weights)
 export function embedText(text: string): Map<string, number> {
   return termFrequency(tokenize(text));
 }

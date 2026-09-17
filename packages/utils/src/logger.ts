@@ -48,37 +48,16 @@ const baseLogger: pino.Logger = pino({
     : undefined,
 });
 
-/**
- * Get (or create) a child logger for a specific service/context.
- *
- * @param name - Service or module name (e.g. 'api', 'worker', 'web')
- * @returns A child logger bound to that context
- */
 export function getLogger(name: string): pino.Logger {
   if (!childLoggers.has(name)) {
-    childLoggers.set(
-      name,
-      baseLogger.child({ service: name }),
-    );
+    childLoggers.set(name, baseLogger.child({ service: name }));
   }
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   return childLoggers.get(name)!;
 }
 
-/**
- * Create a logger with a correlation ID extracted from an incoming request
- * or generated anew.  Useful for tracing a request across services.
- *
- * @param name - Service or module name
- * @param req - Optional IncomingMessage (Express Request) to extract ID from
- * @returns A child logger with correlationId bound
- */
-export function getRequestLogger(
-  name: string,
-  req?: IncomingMessage,
-): pino.Logger {
-  const correlationId =
-    (req?.headers['x-request-id'] as string) || randomUUID();
+export function getRequestLogger(name: string, req?: IncomingMessage): pino.Logger {
+  const correlationId = (req?.headers['x-request-id'] as string) || randomUUID();
   const logger = getLogger(name);
   return logger.child({ correlationId });
 }

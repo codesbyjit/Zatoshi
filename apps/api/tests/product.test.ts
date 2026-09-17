@@ -2,7 +2,7 @@ import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { MongoClient, type Db, type Collection } from 'mongodb';
 import RedisMock from 'ioredis-mock';
-import type { Product, Category } from '@repo/types';
+import type { Product } from '@repo/types';
 
 let mongoServer: MongoMemoryServer;
 let mongoClient: MongoClient;
@@ -10,7 +10,6 @@ let db: Db;
 let redisMock: InstanceType<typeof RedisMock>;
 let productsCollection: Collection<Product>;
 
-// Mock dependencies
 vi.mock('../src/db/client', () => ({
   getDb: () => db,
   connectMongo: vi.fn(),
@@ -33,13 +32,11 @@ beforeAll(async () => {
 
   productsCollection = db.collection<Product>('products');
 
-  // Create indexes
   await productsCollection.createIndex({ slug: 1 }, { unique: true });
   await productsCollection.createIndex({ name: 'text', description: 'text' });
   await productsCollection.createIndex({ categoryId: 1 });
   await productsCollection.createIndex({ price: 1 });
 
-  // Seed products
   const products: Product[] = [
     {
       _id: 'prod-1',
@@ -124,7 +121,7 @@ beforeAll(async () => {
       variants: [],
       inventory: 0,
       tags: ['stand', 'laptop', 'accessories'],
-      isActive: false, // inactive
+      isActive: false,
       isFeatured: false,
       rating: 4.3,
       reviewCount: 75,
@@ -146,7 +143,7 @@ describe('Product Service', () => {
     it('should return paginated results', async () => {
       const query = { isActive: true };
       const total = await productsCollection.countDocuments(query);
-      expect(total).toBe(4); // 4 active products (not prod-5)
+      expect(total).toBe(4);
 
       const page = 1;
       const limit = 2;
@@ -165,7 +162,7 @@ describe('Product Service', () => {
         .find({ isActive: true, categoryId: 'cat-accessories' })
         .toArray();
 
-      expect(items.length).toBe(1); // only USB-C Cable is active in accessories
+      expect(items.length).toBe(1);
       expect(items[0].name).toBe('USB-C Cable 2m');
     });
   });
@@ -238,7 +235,6 @@ describe('Product Service', () => {
       const existing = await productsCollection.findOne({ slug: 'wireless-headphones' });
       expect(existing).toBeTruthy();
 
-      // Attempt to insert with same slug
       const dup = {
         ...existing!,
         _id: 'prod-dup',

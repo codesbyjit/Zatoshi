@@ -20,34 +20,14 @@ interface RegisteredCheck {
   timeoutMs: number;
 }
 
-/**
- * HealthCheck manages a set of dependency health checks (MongoDB, Redis,
- * MinIO, etc.) and produces a unified HealthStatus response.
- *
- * Usage:
- *   const health = new HealthCheck();
- *   health.register('mongodb', async () => { await db.admin().ping(); });
- *   health.register('redis', async () => { await redis.ping(); });
- *   const status = await health.check();
- */
 export class HealthCheck {
   private checks: RegisteredCheck[] = [];
   private startTime: number = Date.now();
 
-  /**
-   * Register a health check function.
-   *
-   * @param name - Unique name for this check (e.g. 'mongodb', 'redis')
-   * @param fn - Async function that resolves if healthy, rejects if unhealthy
-   * @param timeoutMs - Maximum time in ms to wait for this check (default 5000)
-   */
   register(name: string, fn: CheckFn, timeoutMs: number = 5000): void {
     this.checks.push({ name, fn, timeoutMs });
   }
 
-  /**
-   * Run all registered checks concurrently and return a HealthStatus.
-   */
   async check(): Promise<HealthStatus> {
     const results = await Promise.allSettled(
       this.checks.map((c) => this.runCheck(c)),
@@ -61,16 +41,9 @@ export class HealthCheck {
       const name = this.checks[i].name;
       if (result.status === 'fulfilled') {
         checks[name] = result.value;
-        if (result.value.status === 'unhealthy') {
-          overall = 'unhealthy';
-        } else if (
-          result.value.status === 'degraded' &&
-          overall !== 'unhealthy'
-        ) {
-          overall = 'degraded';
-        }
+        if (result.value.status === 'unhealthy') overall = 'unhealthy';
+        else if (result.value.status === 'degraded' && overall !== 'unhealthy') overall = 'degraded';
       } else {
-        // Should not happen — runCheck always resolves
         checks[name] = {
           status: 'unhealthy',
           latency: 0,
@@ -90,9 +63,7 @@ export class HealthCheck {
     };
   }
 
-  private async runCheck(
-    c: RegisteredCheck,
-  ): Promise<HealthCheckEntry> {
+  private async runCheck(c: RegisteredCheck): Promise<HealthCheckEntry> {
     const start = Date.now();
     const lastChecked = new Date().toISOString();
 
@@ -110,7 +81,6 @@ export class HealthCheck {
       };
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
-      // Treat timeouts as degraded rather than unhealthy
       const status = message === 'timeout' ? 'degraded' : 'unhealthy';
       return {
         status,

@@ -3,13 +3,7 @@ import { z } from 'zod';
 import { t, publicProcedure, adminProcedure } from '../trpc/trpc';
 import * as productService from '../services/product.service';
 
-/**
- * Product router — public list/get, admin create/update/delete.
- */
 export const productRouter = t.router({
-  /**
-   * List products with pagination, filtering, and search.
-   */
   list: publicProcedure
     .input(
       z.object({
@@ -30,9 +24,6 @@ export const productRouter = t.router({
       return productService.listProducts(input);
     }),
 
-  /**
-   * Get a product by its slug.
-   */
   getBySlug: publicProcedure
     .input(z.object({ slug: z.string().min(1) }))
     .query(async ({ input }) => {
@@ -43,9 +34,6 @@ export const productRouter = t.router({
       return product;
     }),
 
-  /**
-   * Get a product by its ID.
-   */
   getById: publicProcedure
     .input(z.object({ id: z.string().min(1) }))
     .query(async ({ input }) => {
@@ -56,9 +44,6 @@ export const productRouter = t.router({
       return product;
     }),
 
-  /**
-   * Create a new product (admin only).
-   */
   create: adminProcedure
     .input(
       z.object({
@@ -89,9 +74,6 @@ export const productRouter = t.router({
       return productService.createProduct(input);
     }),
 
-  /**
-   * Update a product (admin only).
-   */
   update: adminProcedure
     .input(
       z.object({
@@ -127,9 +109,6 @@ export const productRouter = t.router({
       return productService.updateProduct(input.id, input.data);
     }),
 
-  /**
-   * Delete a product (admin only).
-   */
   delete: adminProcedure
     .input(z.object({ id: z.string().min(1) }))
     .mutation(async ({ input }) => {

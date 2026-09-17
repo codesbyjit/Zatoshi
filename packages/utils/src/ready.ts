@@ -2,12 +2,6 @@ import { type ReadinessStatus } from '@repo/types';
 
 import { HealthCheck } from './health';
 
-/**
- * ReadinessCheck wraps a HealthCheck instance and exposes a simpler
- * ready/not-ready interface used for Kubernetes-style /readiness probes.
- *
- * A service is considered "ready" only when ALL dependency checks pass.
- */
 export class ReadinessCheck {
   private health: HealthCheck;
 

@@ -1,17 +1,9 @@
 import client from 'prom-client';
 import type { Request, Response, NextFunction } from 'express';
 
-// ---------------------------------------------------------------------------
-// Registry & Default Metrics
-// ---------------------------------------------------------------------------
-
 const register = new client.Registry();
 
 client.collectDefaultMetrics({ register });
-
-// ---------------------------------------------------------------------------
-// HTTP Metrics
-// ---------------------------------------------------------------------------
 
 export const httpRequestCounter = new client.Counter({
   name: 'http_requests_total',
@@ -41,10 +33,6 @@ export const httpResponseSizeBytes = new client.Summary({
   labelNames: ['method', 'route'] as const,
   registers: [register],
 });
-
-// ---------------------------------------------------------------------------
-// Business Metrics
-// ---------------------------------------------------------------------------
 
 export const ordersTotal = new client.Counter({
   name: 'orders_total',
@@ -103,10 +91,6 @@ export const cacheMissCounter = new client.Counter({
   registers: [register],
 });
 
-// ---------------------------------------------------------------------------
-// Helper functions for business metrics
-// ---------------------------------------------------------------------------
-
 export function incrementOrder(status: string = 'completed'): void {
   ordersTotal.inc({ status });
 }
@@ -153,13 +137,6 @@ export function incrementCacheMiss(cache: string = 'redis'): void {
   cacheMissCounter.inc({ cache });
 }
 
-// ---------------------------------------------------------------------------
-// Express Middleware
-// ---------------------------------------------------------------------------
-
-/**
- * Express middleware that exposes /metrics for Prometheus scraping.
- */
 export function metricsMiddleware(
   req: Request,
   res: Response,
@@ -177,11 +154,6 @@ export function metricsMiddleware(
   next();
 }
 
-/**
- * Express middleware that instruments every HTTP request.
- * It increments the request counter and records duration in the histogram.
- * Must be registered BEFORE route handlers.
- */
 export function httpMetricsMiddleware(
   req: Request,
   res: Response,
@@ -189,10 +161,8 @@ export function httpMetricsMiddleware(
 ): void {
   const startTime = Date.now();
   const method = req.method;
-  // Capture the route pattern if available (set by express after routing)
   let route = req.route?.path || req.originalUrl || req.url || 'unknown';
 
-  // Normalize route to avoid unbounded label values
   route = route.replace(/\/\d+/g, '/:id');
 
   const end = res.end.bind(res);
@@ -208,10 +178,6 @@ export function httpMetricsMiddleware(
 
   next();
 }
-
-// ---------------------------------------------------------------------------
-// Exports
-// ---------------------------------------------------------------------------
 
 export { register };
 export default {
